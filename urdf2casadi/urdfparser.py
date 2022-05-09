@@ -677,6 +677,6 @@ class URDFparser(object):
             "q": q,
             "quaternion_fk": quaternion_fk,
             "dual_quaternion_fk": dual_quaternion_fk,
-            "T_fk": T_fk
+            "T_fk": T_fk,
             "rpy_pos_fk": = rpy_pos_fk
         }
