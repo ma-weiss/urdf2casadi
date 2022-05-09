@@ -649,11 +649,25 @@ class URDFparser(object):
                     dual_quaternion_fk,
                     joint_dual_quat)
                 i += 1
+        
+        qx = quaternion_fk[1]
+        qy = quaternion_fk[2]
+        qz = quaternion_fk[3]
+        qw = quaternion_fk[0]
+
+        roll = cs.arctan2(2 * (qw * qx + qy * qz), 1 - 2 * (qx * qx + qy * qy))
+        pitch = cs.arcsin(2 * (qw * qy - qz * qx))
+        yaw = cs.arctan2(2 * (qw * qz + qx * qy), 1 - 2 * (qy * qy + qz * qz))
+        
+        rpy_pos = cs.vertcat(roll, pitch, yaw, T_fk[0:3, 3])
+        
         T_fk = cs.Function("T_fk", [q], [T_fk], self.func_opts)
         quaternion_fk = cs.Function("quaternion_fk",
                                     [q], [quaternion_fk], self.func_opts)
         dual_quaternion_fk = cs.Function("dual_quaternion_fk",
                                          [q], [dual_quaternion_fk], self.func_opts)
+        
+        rpy_pos_fk = cs.Function("rpy_pos_fk", [q], [rpy_pos], self.func_opts)
 
         return {
             "joint_names": actuated_names,
@@ -664,4 +678,5 @@ class URDFparser(object):
             "quaternion_fk": quaternion_fk,
             "dual_quaternion_fk": dual_quaternion_fk,
             "T_fk": T_fk
+            "rpy_pos_fk": = rpy_pos_fk
         }
