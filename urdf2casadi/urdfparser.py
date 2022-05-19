@@ -129,18 +129,26 @@ class URDFparser(object):
         return Fv, Fd
 
 
-    def get_n_joints(self, root, tip):
+    def get_n_joints(self, root, tips):
         """Returns number of actuated joints."""
-
-        chain = self.robot_desc.get_chain(root, tip)
+        
+        if type(tips) == list:
+            chain = []
+            for tip in tips:
+                chain.extend(self.robot_desc.get_chain(root, tip))
+        if type(tips) == str:
+            chain = self.robot_desc.get_chain(root, tips)
         n_actuated = 0
+        joints = []
 
         for item in chain:
             if item in self.robot_desc.joint_map:
                 joint = self.robot_desc.joint_map[item]
-                if joint.type in self.actuated_types:
-                    n_actuated += 1
 
+                if not joint.name in joints:
+                    joints.append(self.robot_desc.joint_map[item].name)
+                    if joint.type in self.actuated_types:
+                        n_actuated += 1
         return n_actuated
 
     def _model_calculation(self, root, tip, q):
